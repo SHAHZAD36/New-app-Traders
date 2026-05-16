@@ -25,40 +25,19 @@ jobs:
           flutter-version: '3.22.0'
           channel: 'stable'
 
-      - name: Fix repository imports
+      - name: Fix all import issues
         run: |
-          cat > lib/features/expenses/domain/repositories/expense_repository.dart << 'EOF'
-          import '../../data/models/expense_model.dart';
-          abstract class ExpenseRepository {
-            Future<List<ExpenseModel>> getExpenses();
-            Future<int> addExpense(ExpenseModel expense);
-            Future<void> deleteExpense(int id);
-          }
-          EOF
+          # Fix new_sale_screen.dart import
+          sed -i "s|import '../models/sale_model.dart'|import '../../data/models/sale_model.dart'|g" lib/features/sales/presentation/screens/new_sale_screen.dart
 
-          cat > lib/features/purchases/domain/repositories/purchase_repository.dart << 'EOF'
-          import '../../data/models/purchase_model.dart';
-          abstract class PurchaseRepository {
-            Future<List<PurchaseModel>> getPurchases();
-            Future<int> addPurchase(PurchaseModel p);
-          }
-          EOF
+          # Fix domain repository files
+          printf "import '../../data/models/expense_model.dart';\nabstract class ExpenseRepository {\n  Future<List<ExpenseModel>> getExpenses();\n  Future<int> addExpense(ExpenseModel expense);\n  Future<void> deleteExpense(int id);\n}\n" > lib/features/expenses/domain/repositories/expense_repository.dart
 
-          cat > lib/features/collections/domain/repositories/collection_repository.dart << 'EOF'
-          import '../../data/models/collection_model.dart';
-          abstract class CollectionRepository {
-            Future<List<CollectionModel>> getCollections();
-            Future<int> addCollection(CollectionModel c);
-          }
-          EOF
+          printf "import '../../data/models/purchase_model.dart';\nabstract class PurchaseRepository {\n  Future<List<PurchaseModel>> getPurchases();\n  Future<int> addPurchase(PurchaseModel p);\n}\n" > lib/features/purchases/domain/repositories/purchase_repository.dart
 
-          cat > lib/features/cash_book/domain/repositories/cash_book_repository.dart << 'EOF'
-          import '../../data/models/cash_book_model.dart';
-          abstract class CashBookRepository {
-            Future<List<CashBookModel>> getEntries();
-            Future<int> addEntry(CashBookModel e);
-          }
-          EOF
+          printf "import '../../data/models/collection_model.dart';\nabstract class CollectionRepository {\n  Future<List<CollectionModel>> getCollections();\n  Future<int> addCollection(CollectionModel c);\n}\n" > lib/features/collections/domain/repositories/collection_repository.dart
+
+          printf "import '../../data/models/cash_book_model.dart';\nabstract class CashBookRepository {\n  Future<List<CashBookModel>> getEntries();\n  Future<int> addEntry(CashBookModel e);\n}\n" > lib/features/cash_book/domain/repositories/cash_book_repository.dart
 
       - name: Create fresh Flutter project
         run: |
