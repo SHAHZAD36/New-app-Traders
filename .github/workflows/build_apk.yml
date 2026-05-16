@@ -25,6 +25,41 @@ jobs:
           flutter-version: '3.22.0'
           channel: 'stable'
 
+      - name: Fix repository imports
+        run: |
+          cat > lib/features/expenses/domain/repositories/expense_repository.dart << 'EOF'
+          import '../../data/models/expense_model.dart';
+          abstract class ExpenseRepository {
+            Future<List<ExpenseModel>> getExpenses();
+            Future<int> addExpense(ExpenseModel expense);
+            Future<void> deleteExpense(int id);
+          }
+          EOF
+
+          cat > lib/features/purchases/domain/repositories/purchase_repository.dart << 'EOF'
+          import '../../data/models/purchase_model.dart';
+          abstract class PurchaseRepository {
+            Future<List<PurchaseModel>> getPurchases();
+            Future<int> addPurchase(PurchaseModel p);
+          }
+          EOF
+
+          cat > lib/features/collections/domain/repositories/collection_repository.dart << 'EOF'
+          import '../../data/models/collection_model.dart';
+          abstract class CollectionRepository {
+            Future<List<CollectionModel>> getCollections();
+            Future<int> addCollection(CollectionModel c);
+          }
+          EOF
+
+          cat > lib/features/cash_book/domain/repositories/cash_book_repository.dart << 'EOF'
+          import '../../data/models/cash_book_model.dart';
+          abstract class CashBookRepository {
+            Future<List<CashBookModel>> getEntries();
+            Future<int> addEntry(CashBookModel e);
+          }
+          EOF
+
       - name: Create fresh Flutter project
         run: |
           flutter create --org com.chaudhary.traders --project-name chaudhary_traders temp_project
